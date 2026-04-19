@@ -1,0 +1,9 @@
+POST http://localhost:8080/api/v1/measurements
+Content-Type: application/json
+
+{
+  "date": "2026-04-19T09:00:00Z",
+  "systolic": 90,
+  "diastolic": 50,
+  "pulse": 110
+}

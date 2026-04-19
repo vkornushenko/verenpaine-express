@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", // compile TS to ES2022 JavaScript
+    "esModuleInterop": true, // allow default imports from CommonJS modules
+    "skipLibCheck": true, // skip type checking of 3rd party libraries
+    "module": "NodeNext", // to insure all imort/export statements work
+    "rootDir": "src",
+    "outDir": "dist", // output compiled JS to dist folder
+    "lib": ["ES2022", "dom"], // to make sure TS aware of ES2022 features and DOM APIs
+    "strict": true // to enable strict type checking
+  },
+  "include": ["src/**/*"]
+}

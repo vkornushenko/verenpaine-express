@@ -1,0 +1,32 @@
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+# {
+#   "name": "Vladi",
+#   "email": "vkornushenko@gmail.com",
+#   "password": "vkornushenko"
+# }
+
+# {
+#   "name": "Johanna",
+#   "email": "johanna@gmail.com",
+#   "password": "johanna"
+# }
+
+# {
+#   "name": "Hursik",
+#   "email": "hursik@gmail.com",
+#   "password": "hursik"
+# }
+
+# {
+#   "name": "Peugo",
+#   "email": "peugo@gmail.com",
+#   "password": "peugo123"
+# }
+
+{
+  "name": "Alexandr",
+  "email": "Alexandr@gmail.com",
+  "password": "alexandr"
+}

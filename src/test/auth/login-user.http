@@ -1,0 +1,22 @@
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+# {
+#   "email": "johanna@gmail.com",
+#   "password": "johanna"
+# }
+
+# {
+#   "email": "vkornushenko@gmail.com",
+#   "password": "vkornushenko"
+# }
+
+# {
+#   "email": "hursik@gmail.com",
+#   "password": "hursik"
+# }
+
+{
+  "email": "peugo@gmail.com",
+  "password": "peugo123"
+}
