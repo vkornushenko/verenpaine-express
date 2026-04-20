@@ -9,6 +9,6 @@ const router = Router();
 // measurement routes
 router.post('/', isAuth, validateBody(createMeasurementSchema), createMeasurement);
 router.get('/', isAuth, getMeasurements);
-router.get('/:id', getMeasurementById);
+router.get('/:id', isAuth, getMeasurementById);
 
 export default router;

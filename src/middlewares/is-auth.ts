@@ -1,8 +1,12 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../utils/AppError.js';
 
 export function isAuth(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies.token;
+  if (!token) {
+    throw new AppError('Unauthorized', 401);
+  }
 
   const JWT_SECRET = process.env.JWT_SECRET;
   if (!JWT_SECRET) {
@@ -20,17 +24,16 @@ export function isAuth(req: Request, res: Response, next: NextFunction) {
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({ message: 'Token expired' });
+      throw new AppError('Token expired', 401);
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ message: 'Invalid token' });
+      throw new AppError('Invalid token', 401);
     }
 
     if (error instanceof jwt.NotBeforeError) {
-      return res.status(401).json({ message: 'Token not active yet' });
+      throw new AppError('Token not active yet', 401);
     }
-
-    return res.status(500).json({ message: 'Auth failed' });
+    throw new AppError('Auth failed', 500);
   }
 }

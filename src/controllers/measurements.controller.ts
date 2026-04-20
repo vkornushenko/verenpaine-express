@@ -1,10 +1,18 @@
 import { Request, Response } from 'express';
 import { MeasurementModel } from '../models/measurements.js';
-import { createMeasurementService } from '../services/measurements.service.js';
+import {
+  createMeasurementService,
+  getMeasurementsService,
+  getMeasurementByIdService,
+} from '../services/measurements.service.js';
+import { AppError } from '../utils/AppError.js';
 
 export async function createMeasurement(req: Request, res: Response) {
+  if (!req.user!.id) {
+    throw new AppError('User not found', 404);
+  }
   const measurement = await createMeasurementService({
-    user: req.user?.id,
+    user: req.user!.id,
     ...req.body,
   });
   res.status(201).json({
@@ -13,27 +21,24 @@ export async function createMeasurement(req: Request, res: Response) {
 }
 
 export async function getMeasurements(req: Request, res: Response) {
-  try {
-    const measurements = await MeasurementModel.find({ user: req.user?.id });
-    res.json({
-      data: measurements.map((m) => m.toObject()),
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: 'Failed to get measurements' });
+  if (!req.user!.id) {
+    throw new AppError('User not found', 404);
   }
+  const measurements = await getMeasurementsService(req.user!.id);
+  res.status(200).json({
+    data: measurements.map((m) => m.toObject()),
+  });
 }
 
 export async function getMeasurementById(req: Request, res: Response) {
-  try {
-    const measurement = await MeasurementModel.findById(req.params.id);
-    if (!measurement)
-      return res.status(404).json({ message: 'Measurement not found' });
-    res.json({
-      data: measurement.toObject(),
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: 'Failed to get measurement' });
+  if (!req.user!.id) {
+    throw new AppError('User not found', 404);
   }
+  const userId = req.user!.id;
+  const measurementId = req.params.id as string;
+
+  const measurement = await getMeasurementByIdService({userId, measurementId});
+  res.status(200).json({
+    data: measurement.toObject(),
+  });
 }

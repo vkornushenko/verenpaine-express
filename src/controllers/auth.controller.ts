@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
-import {
-  createUserService,
-  loginUserService,
-} from '../services/auth.service.js';
+import { createUserService, loginUserService } from '../services/auth.service.js';
 import { generateToken } from '../utils/jwt.js';
 
 // create user
@@ -30,5 +27,5 @@ export async function loginUser(req: Request, res: Response) {
     sameSite: 'lax',
     path: '/',
   });
-  return res.status(200).json(user);
+  res.status(200).json(user);
 }
