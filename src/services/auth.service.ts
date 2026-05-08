@@ -37,3 +37,11 @@ export async function loginUserService(email: string, password: string) {
 
   return user;
 }
+
+export async function getUserByIdService(userId: string){
+  const user = await UserModel.findById({_id: userId});
+  if(!user){
+    throw new AppError('User not found', 404);
+  }
+  return user;
+}

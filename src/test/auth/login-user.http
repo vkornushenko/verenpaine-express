@@ -1,23 +1,7 @@
 POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
-
-# {
-#   "email": "vkornushenko@gmail.com",
-#   "password": "vkornushenko"
-# }
-
-# {
-#   "email": "johanna@gmail.com",
-#   "password": "johanna"
-# }
-
-# {
-#   "email": "hursik@gmail.com",
-#   "password": "hursik"
-# }
-
 {
-  "email": "peugo@gmail.com",
-  "password": "peugo123"
+  "email": "vkornushenko@gmail.com",
+  "password": "XP!d*-pay52454G"
 }

@@ -3,10 +3,20 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError.js';
 
 export function isAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.token;
-  if (!token) {
+  // token from authorization header (bearer)
+  const authHeader = req.get('Authorization')
+  if(!authHeader){
     throw new AppError('Unauthorized', 401);
   }
+  const token = authHeader?.split(' ')[1];
+  // console.log('isAuth tokenBearer:');
+  // console.log(token);
+
+  // // token from cookies
+  // const token = req.cookies.token;
+  // if (!token) {
+  //   throw new AppError('Unauthorized', 401);
+  // }
 
   const JWT_SECRET = process.env.JWT_SECRET;
   if (!JWT_SECRET) {
