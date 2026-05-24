@@ -19,7 +19,7 @@ export async function createMeasurementService(data: {
 
 export async function getMeasurementsService(userId: string) {
   try {
-    const measurements = await MeasurementModel.find({ user: userId });
+    const measurements = await MeasurementModel.find({ user: userId }).sort({ date: -1 });
     return measurements;
   } catch (error) {
     console.log(error);
