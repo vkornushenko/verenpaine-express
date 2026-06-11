@@ -7,6 +7,7 @@ import {
   deleteMeasurementByIdService,
 } from '../services/measurements.service.js';
 import { AppError } from '../utils/AppError.js';
+import { SortOrder } from 'mongoose';
 
 export async function createMeasurement(req: Request, res: Response) {
   console.log('user is creating a new measurement:');
@@ -29,10 +30,20 @@ export async function getMeasurements(req: Request, res: Response) {
   if (!req.user!.id) {
     throw new AppError('User not found', 404);
   }
-  const measurements = await getMeasurementsService(req.user!.id);
+  const currentPage = +(req.query.page || 1);
+  const perPage = +(req.query.perPage || 25);
+  const start = req.query.start ? new Date(String(req.query.start)) : null;
+  const end = req.query.end ? new Date(String(req.query.end)) : null;
+  const sort = req.query.sort as SortOrder || 'desc';
+
+  console.log(`req.query.page=${req.query.page}`)
+  console.log(`currentPage=${currentPage}, perPage=${perPage}`);
+
+  const {measurements, totalMeasurements} = await getMeasurementsService(req.user!.id, currentPage, perPage, start, end, sort);
   console.log('getting Measurements')
   res.status(200).json({
     data: measurements.map((m) => m.toObject()),
+    totalMeasurements: totalMeasurements,
   });
 }
 
