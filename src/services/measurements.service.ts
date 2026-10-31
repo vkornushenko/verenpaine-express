@@ -2,6 +2,13 @@ import { SortOrder, Types } from 'mongoose';
 import { MeasurementModel } from '../models/measurements.js';
 import { AppError } from '../utils/AppError.js';
 
+export type AverageMeasurements = {
+  systolic: number | null;
+  diastolic: number | null;
+  pulse: number | null;
+  measurementCount: number;
+};
+
 export async function createMeasurementService(data: {
   user: string;
   systolic: number;
@@ -42,7 +49,7 @@ export async function getMeasurementsService(
   }
 
   try {
-    // total measurements for user
+    // total measurements for user in date range
     const totalMeasurements =
       await MeasurementModel.find(filter).countDocuments();
     console.log(`totalMeasurements=${totalMeasurements}`);
@@ -57,6 +64,64 @@ export async function getMeasurementsService(
   } catch (error) {
     console.log(error);
     throw new AppError('Failed to get measurements', 500);
+  }
+}
+
+export async function getAverageMeasurementsService(
+  userId: string,
+  start: Date | null,
+  end: Date | null,
+): Promise<AverageMeasurements> {
+  const match: {
+    user: Types.ObjectId;
+    date?: {
+      $gte?: Date;
+      $lte?: Date;
+    };
+  } = {
+    user: new Types.ObjectId(userId),
+  };
+
+  if (start || end) {
+    match.date = {};
+    if (start) match.date.$gte = start;
+    if (end) match.date.$lte = end;
+  }
+
+  try {
+    const [averages] = await MeasurementModel.aggregate<AverageMeasurements>([
+      { $match: match },
+      {
+        $group: {
+          _id: null,
+          systolic: { $avg: '$systolic' },
+          diastolic: { $avg: '$diastolic' },
+          pulse: { $avg: '$pulse' },
+          measurementCount: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          systolic: 1,
+          diastolic: 1,
+          pulse: 1,
+          measurementCount: 1,
+        },
+      },
+    ]);
+
+    return (
+      averages ?? {
+        systolic: null,
+        diastolic: null,
+        pulse: null,
+        measurementCount: 0,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    throw new AppError('Failed to get average measurements', 500);
   }
 }
 

@@ -153,6 +153,40 @@ Retrieve all measurements for the authenticated user.
 
 ---
 
+### Get Average Measurements
+
+Retrieve the average systolic pressure, diastolic pressure, and pulse for all
+measurements belonging to the authenticated user in an optional date range.
+This result is independent of list pagination.
+
+**Endpoint:** `GET /measurements/average`
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| start | ISO 8601 | Optional inclusive start date |
+| end | ISO 8601 | Optional inclusive end date |
+
+**Response (200):**
+
+```json
+{
+  "data": {
+    "systolic": 120.5,
+    "diastolic": 80.2,
+    "pulse": 72,
+    "measurementCount": 4
+  }
+}
+```
+
+If the range contains no measurements, each average is `null` and
+`measurementCount` is `0`. Invalid dates or a start date later than the end
+date return status `400`.
+
+---
+
 ### Get Measurement by ID
 
 Retrieve a specific measurement (only if owned by authenticated user).

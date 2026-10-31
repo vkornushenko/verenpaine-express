@@ -3,11 +3,27 @@ import { Request, Response } from 'express';
 import {
   createMeasurementService,
   getMeasurementsService,
+  getAverageMeasurementsService,
   getMeasurementByIdService,
   deleteMeasurementByIdService,
 } from '../services/measurements.service.js';
 import { AppError } from '../utils/AppError.js';
 import { SortOrder } from 'mongoose';
+
+function parseDateQueryParam(value: unknown, name: string): Date | null {
+  if (value === undefined) {
+    return null;
+  }
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new AppError(`Invalid ${name} date`, 400);
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    throw new AppError(`Invalid ${name} date`, 400);
+  }
+  return date;
+}
 
 export async function createMeasurement(req: Request, res: Response) {
   console.log('user is creating a new measurement:');
@@ -54,6 +70,25 @@ export async function getMeasurements(req: Request, res: Response) {
     data: measurements.map((m) => m.toObject()),
     totalMeasurements: totalMeasurements,
   });
+}
+
+export async function getAverageMeasurements(req: Request, res: Response) {
+  if (!req.user!.id) {
+    throw new AppError('User not found', 404);
+  }
+
+  const start = parseDateQueryParam(req.query.start, 'start');
+  const end = parseDateQueryParam(req.query.end, 'end');
+  if (start && end && start > end) {
+    throw new AppError('Start date must be before end date', 400);
+  }
+
+  const averages = await getAverageMeasurementsService(
+    req.user!.id,
+    start,
+    end,
+  );
+  res.status(200).json({ data: averages });
 }
 
 export async function getMeasurementById(req: Request, res: Response) {
